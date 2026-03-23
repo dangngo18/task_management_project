@@ -1,9 +1,13 @@
-import './App.css'
+import { Button } from "./components/ui/button";
+import "./styles/App.css";
 
 function App() {
-  return (
-    <div></div>
-  )
+  return <div className="text-3xl">
+    hello world
+    <Button>
+      Click here
+    </Button>
+  </div>;
 }
 
-export default App
+export default App;
