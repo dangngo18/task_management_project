@@ -1,13 +1,13 @@
-import { Button } from "./components/ui/button";
+import { Providers } from "./app/providers";
+import Home from "./pages/Home";
 import "./styles/App.css";
 
 function App() {
-  return <div className="text-3xl">
-    hello world
-    <Button>
-      Click here
-    </Button>
-  </div>;
+  return (
+    <Providers>
+      <Home />
+    </Providers>
+  );
 }
 
 export default App;
