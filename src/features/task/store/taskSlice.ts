@@ -9,6 +9,9 @@ const initialState: TaskState = {
   searchQuery: "",
 };
 const reducers: ReducersType = {
+  setLocalStorageTasks: function (state: TaskState, action: PayloadAction<Task[]>): void {
+    state.tasks = action.payload;
+  },
   addTask: function (state: TaskState, action: PayloadAction<Task>): void {
     state.tasks.push(action.payload);
     localStorage.setItem("tasks", JSON.stringify(state.tasks));

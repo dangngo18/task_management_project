@@ -31,7 +31,7 @@ export const getDueInText = (taskDeadline?: string): string => {
 
 export const formatDate = (date?: string): string => {
   if (!date) return "";
-  return dayjs(date).format("MMM DD, YYYY");
+  return dayjs(date).format("hh:mm A - MMMM DD, YYYY");
 };
 
 export const getStatusColor = (status: Task["status"]): string => {

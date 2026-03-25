@@ -24,14 +24,18 @@ export function TaskStatistics() {
     {
       title: "Total Tasks",
       value: totalTasks,
-      icon: <LucideChartGantt className="text-blue-500" />,
+      icon: (
+        <LucideChartGantt className="text-blue-500" />
+      ),
       color: "bg-blue-500",
       bgColor: "bg-blue-100",
     },
     {
       title: "Completed",
       value: completedTasks,
-      icon: <LucideCheckCircle className="text-green-500" />,
+      icon: (
+        <LucideCheckCircle className="text-green-500" />
+      ),
       color: "bg-green-500",
       bgColor: "bg-green-100",
     },
@@ -45,13 +49,15 @@ export function TaskStatistics() {
     {
       title: "Overdue",
       value: overdueTasks,
-      icon: <LucideAlertCircle className="text-red-500" />,
+      icon: (
+        <LucideAlertCircle className="text-red-500" />
+      ),
       color: "bg-red-500",
       bgColor: "bg-red-200",
     },
   ];
   return (
-    <div className="flex gap-x-4">
+    <div className="flex gap-x-4 overflow-x-scroll no-scrollbar">
       {stats.map((stat, index) => (
         <motion.div
           key={stat.title}
@@ -59,22 +65,24 @@ export function TaskStatistics() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
           className={cn(
-            "flex-1 rounded-2xl bg-white p-6",
-            stat.title == "Overdue" && "bg-red-100",
+            "flex-1 rounded-2xl bg-white p-3 md:p-6 min-w-30 md:min-w-50",
+            stat.title == "Overdue" && "bg-red-100 border border-red-300",
           )}
         >
           <div
             className={cn(
-              "w-12 h-12 flex items-center justify-center rounded-2xl",
-              stat.bgColor,
+              "w-7 h-8 md:w-12 md:h-12 flex items-center justify-center rounded-2xl",
+              `md:${stat.bgColor}`,
             )}
           >
             {stat.icon}
           </div>
-          <p className="text-sm text-gray-600 mt-4 uppercase font-medium tracking-wide">
+          <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-4 uppercase font-medium tracking-wide">
             {stat.title}
           </p>
-          <h2 className="text-2xl font-bold text-gray-900">{stat.value}</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+            {stat.value}
+          </h2>
         </motion.div>
       ))}
     </div>

@@ -1,25 +1,44 @@
-import { LucideCalendarCheck2 } from "lucide-react";
+import { LucideCalendarCheck2, LucidePlus } from "lucide-react";
 import { TaskStatistics } from "../features/task/components/TaskStatistics";
 import { TaskForm } from "../features/task/components/TaskForm";
 import { TaskSearchBar } from "../features/task/components/TaskSearchBar";
 import { TaskFilterTabs } from "../features/task/components/TaskFilterTabs";
 import { Button } from "../components/ui/button";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { TaskList } from "../features/task/components/TaskList";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../app/store";
+import { loadTasksFromStorage } from "../features/task";
 
 export default function Home() {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    const savedTasks = localStorage.getItem("tasks");
+    if (savedTasks) {
+      try {
+        const tasks = JSON.parse(savedTasks);
+        dispatch(loadTasksFromStorage(tasks));
+      } catch (error) {
+        console.error("Failed to load tasks from storage", error);
+      }
+    }
+  }, [dispatch]);
+
   return (
     <div className="min-h-screen bg-linear-to-b from-blue-50 to-white">
       <header className="border-b border-gray-200 bg-white shadow-sm">
-        <div className="mx-auto container px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto container px-4 py-4 md:py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-start space-x-4">
-            <LucideCalendarCheck2 className="text-green-500 w-15 h-15" />
+            <LucideCalendarCheck2 className="text-green-500 w-10 h-10 md:w-15 md:h-15" />
 
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Task Manager</h1>
+              <h1 className="text-xl md:text-3xl font-bold text-gray-900">
+                Task Manager
+              </h1>
               <p className="mt-1 text-sm text-gray-600">
                 Organize your tasks efficiently
               </p>
@@ -34,17 +53,18 @@ export default function Home() {
           </div>
           <div>
             <div className="flex justify-between p-4 bg-white rounded-2xl mt-4">
-              <div className="task_search_filter_block flex gap-x-4 w-1/2">
+              <div className="task_search_filter_block flex flex-col md:flex-row gap-4 w-full md:w-1/2">
                 <TaskSearchBar className="grow-0 focus-within:grow duration-500" />
                 <TaskFilterTabs />
               </div>
-              <div className="task_button_function relative">
+              <div className="task_button_function">
                 <Button
-                  className="rounded-xl p-4 text-base bg-blue-600 text-white hover:bg-blue-700"
-                  size={"lg"}
+                  className="rounded-xl p-0 text-base bg-transparent md:bg-blue-600 text-blue-600 md:text-white hover:bg-blue-700 not-md:fixed not-md:bottom-4 not-md:right-4 not-md:border not-md:border-blue-600"
+                  size={"icon-xl"}
                   onClick={() => setIsFormOpen(!isFormOpen)}
                 >
-                  Add Task
+                  <LucidePlus className="md:hidden size-6" />
+                  <span className="not-md:hidden">Add Task</span>
                 </Button>
               </div>
             </div>

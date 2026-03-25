@@ -11,6 +11,7 @@ import { useState } from "react";
 import { TaskForm } from "./TaskForm";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
+import { LucidePen } from "lucide-react";
 
 interface TaskCardProps {
   task: Task;
@@ -110,35 +111,40 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
             )}
           </div>
 
-          <div className="mt-4 flex gap-2">
-            {task.status !== "DONE" && (
+          <div className="mt-4 flex gap-2 justify-between">
+            <div className="space-x-4">
+              {task.status !== "DONE" && task.status !== "TODO" && (
+                <button
+                  onClick={() => handleStatusChange("DONE")}
+                  className="rounded-md border border-green-600 px-3 py-1 text-xs font-medium text-green-700 hover:bg-green-200"
+                >
+                  Complete
+                </button>
+              )}
+              {task.status === "TODO" && (
+                <button
+                  onClick={() => handleStatusChange("IN_PROGRESS")}
+                  className="rounded-md border border-blue-600 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200"
+                >
+                  Start
+                </button>
+              )}
+            </div>
+            <div className="flex items-center space-x-4">
               <button
-                onClick={() => handleStatusChange("DONE")}
-                className="rounded-md bg-green-100 px-3 py-1 text-xs font-medium text-green-700 hover:bg-green-200"
+                onClick={() => setIsEditing(true)}
+                className="rounded-md bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-200 flex items-center gap-x-2"
               >
-                Complete
+                Edit
+                <LucidePen className="w-3.5 h-3.5" />
               </button>
-            )}
-            {task.status === "TODO" && (
               <button
-                onClick={() => handleStatusChange("IN_PROGRESS")}
-                className="rounded-md bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200"
+                onClick={handleDelete}
+                className="rounded-md px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-200"
               >
-                Start
+                Delete
               </button>
-            )}
-            <button
-              onClick={() => setIsEditing(true)}
-              className="rounded-md bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-200"
-            >
-              Edit
-            </button>
-            <button
-              onClick={handleDelete}
-              className="rounded-md bg-red-100 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-200"
-            >
-              Delete
-            </button>
+            </div>
           </div>
         </motion.div>
       )}

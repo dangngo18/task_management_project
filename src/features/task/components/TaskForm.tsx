@@ -1,27 +1,32 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { taskFormSchema } from "../schema";
-import { useTaskActions } from "../hooks/useTaskActions";
-import toast from "react-hot-toast";
-import type { Task } from "../types";
 import { useState } from "react";
-import type { TaskFormData } from "../types/form";
 import { Button } from "../../../components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "../../../components/ui/popover";
-import { ChevronDownIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../../../components/ui/calendar";
 import dayjs from "dayjs";
-
-interface TaskFormProps {
-  initialTask?: Task;
-  onSubmit?: () => void;
-  onCancel?: () => void;
-  isEditing?: boolean;
-}
+import type { TaskFormProps } from "../types/props";
+import { useFormActions } from "../hooks/useFormActions";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "../../../components/ui/field";
+import { Input } from "../../../components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../../../components/ui/select";
+import { Controller } from "react-hook-form";
 
 export const TaskForm: React.FC<TaskFormProps> = ({
   initialTask,
@@ -29,166 +34,173 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   onCancel,
   isEditing = false,
 }) => {
-  const { handleAddTask, handleUpdateTask } = useTaskActions();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [date, setDate] = useState<Date | null>(
     initialTask?.deadline ? new Date(initialTask.deadline) : null,
   );
+  const [time, setTime] = useState<string>(
+    initialTask?.deadline
+      ? dayjs(initialTask.deadline).format("HH:mm:ss")
+      : "",
+  );
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-  } = useForm<TaskFormData>({
-    resolver: zodResolver(taskFormSchema),
-    defaultValues: initialTask
-      ? {
-          title: initialTask.title,
-          description: initialTask.description || "",
-          status: initialTask.status,
-          deadline: initialTask.deadline || "",
-        }
-      : {
-          title: "",
-          description: "",
-          status: "TODO",
-          deadline: "",
-        },
+  const { form, onSubmitForm, onCancelClick, isSubmitting } = useFormActions({
+    initialTask,
+    onSubmit,
+    onCancel,
+    isEditing,
+    onReset: () => {
+      setDate(initialTask?.deadline ? new Date(initialTask.deadline) : null);
+      setTime(
+        initialTask?.deadline
+          ? dayjs(initialTask.deadline).format("HH:mm:ss")
+          : "--:--:--",
+      );
+    },
   });
 
-  const onSubmitForm = async (data: TaskFormData) => {
-    try {
-      setIsSubmitting(true);
-      if (isEditing && initialTask) {
-        handleUpdateTask(initialTask.id, {
-          title: data.title,
-          description: data.description,
-          status: data.status,
-          deadline: data.deadline,
-        });
-        toast.success("Task updated successfully!");
-      } else {
-        handleAddTask({
-          title: data.title,
-          description: data.description,
-          status: data.status,
-          deadline: data.deadline,
-        });
-        toast.success("Task added successfully!");
-      }
-      reset();
-      onSubmit?.();
-    } catch {
-      toast.error("Failed to save task");
-    } finally {
-      setIsSubmitting(false);
+  const updateDeadline = (newDate: Date | null, newTime: string) => {
+    if (newDate) {
+      const resolvedTime = newTime || "00:00:00";
+      const [h, m, s] = resolvedTime.split(":").map(Number);
+      const combined = dayjs(newDate).hour(h).minute(m).second(s || 0).toISOString();
+      form.setValue("deadline", combined, { shouldValidate: true });
+    } else {
+      form.setValue("deadline", "", { shouldValidate: true });
     }
-  };
-
-  const onCancelClick = () => {
-    onCancel?.();
   };
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmitForm)}
+      onSubmit={form.handleSubmit(onSubmitForm)}
       onReset={onCancelClick}
       className="space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
     >
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label
-            htmlFor="status"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Status
-          </label>
-          <select
-            {...register("status")}
-            id="status"
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          >
-            <option value="TODO">Todo</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="DONE">Done</option>
-          </select>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FieldGroup className="md:max-w-100">
+          <Controller
+            name="status"
+            control={form.control}
+            render={({ field }) => (
+              <Field className="gap-2">
+                <FieldLabel htmlFor={field.name}>Status</FieldLabel>
+                <Select
+                  name={field.name}
+                  value={field.value || ""}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Status</SelectLabel>
+                      <SelectItem value="TODO" className={"text-blue-600"}>
+                        Todo
+                      </SelectItem>
+                      <SelectItem
+                        value="IN_PROGRESS"
+                        className={"text-yellow-600"}
+                      >
+                        In Progress
+                      </SelectItem>
+                      <SelectItem value="DONE" className={"text-green-600"}>
+                        Done
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
+            )}
+          />
+        </FieldGroup>
 
-        <div>
-          <label
-            htmlFor="deadline"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Deadline
-          </label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                data-empty={!date}
-                className="w-full mt-1 justify-between text-left data-[empty=true]:text-muted-foreground border-gray-300 rounded-md border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              >
-                {date ? (
-                  dayjs(date).format("MMMM D, YYYY")
-                ) : (
-                  <span>Pick a date</span>
-                )}
-                <ChevronDownIcon />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={date || undefined}
-                onSelect={(date) => {
-                  setDate(date!);
-                  // setDate to dealine field in form
-                  if (date) {
-                    const formattedDate = dayjs(date).format("YYYY-MM-DD");
-                    setValue("deadline", formattedDate, { shouldDirty: true });
-                  }
-                }}
-                defaultMonth={date || undefined}
+        {/* Combined Date and Time Fields — wired to form deadline field */}
+        <FieldGroup className="flex-row gap-x-4">
+          <Field className="gap-2">
+            <FieldLabel htmlFor="deadline">Deadline</FieldLabel>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  data-empty={!date}
+                  className="w-full justify-between text-left data-[empty=true]:text-muted-foreground border-gray-300 rounded-md border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  {date ? (
+                    dayjs(date).format("MMMM D, YYYY")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                  <CalendarIcon />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={date || undefined}
+                  onSelect={(newDate) => {
+                    setDate(newDate!);
+                    updateDeadline(newDate!, time);
+                  }}
+                  defaultMonth={date || undefined}
+                />
+              </PopoverContent>
+            </Popover>
+          </Field>
+          <Field className="gap-2">
+            <FieldLabel htmlFor="deadlineTime">Time</FieldLabel>
+            <Input
+              type="time"
+              id="deadlineTime"
+              step="1"
+              lang="en-GB"
+              value={time}
+              onChange={(e) => {
+                setTime(e.target.value);
+                updateDeadline(date, e.target.value);
+              }}
+              className="bg-background"
+            />
+          </Field>
+        </FieldGroup>
+      </div>
+      <FieldGroup>
+        <Controller
+          name="title"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field className="gap-2" data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Task Title *</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                type="text"
+                aria-invalid={fieldState.invalid}
+                placeholder="Enter task title"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
-            </PopoverContent>
-          </Popover>
-        </div>
-      </div>
-      <div>
-        <label
-          htmlFor="title"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Task Title *
-        </label>
-        <input
-          {...register("title")}
-          id="title"
-          type="text"
-          placeholder="Enter task title"
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-        {errors.title && (
-          <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
-        )}
-      </div>
-      <div>
-        <label
-          htmlFor="description"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Description
-        </label>
-        <textarea
-          {...register("description")}
-          id="description"
-          placeholder="Enter task description (optional)"
-          rows={3}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+      </FieldGroup>
+      <FieldGroup>
+        <Controller
+          name="description"
+          control={form.control}
+          render={({ field }) => (
+            <Field className="gap-2">
+              <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+              <textarea
+                {...field}
+                id="description"
+                placeholder="Enter task description (optional)"
+                rows={3}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </Field>
+          )}
         />
-      </div>
+      </FieldGroup>
       <div className="flex gap-x-4">
         <Button
           type="reset"
