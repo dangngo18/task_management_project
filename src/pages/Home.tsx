@@ -59,8 +59,8 @@ export default function Home() {
               </div>
               <div className="task_button_function">
                 <Button
-                  className="rounded-xl p-0 text-base bg-transparent md:bg-blue-600 text-blue-600 md:text-white hover:bg-blue-700 not-md:fixed not-md:bottom-4 not-md:right-4 not-md:border not-md:border-blue-600"
-                  size={"icon-xl"}
+                  className="cursor-pointer rounded-xl p-3 md:p-4 text-base bg-blue-600  text-white hover:bg-blue-700 not-md:fixed not-md:bottom-4 not-md:right-4 not-md:border not-md:border-blue-600"
+                  size={"xl"}
                   onClick={() => setIsFormOpen(!isFormOpen)}
                 >
                   <LucidePlus className="md:hidden size-6" />
@@ -88,7 +88,7 @@ export default function Home() {
               )}
             </AnimatePresence>
           </div>
-          <div className="mt-4">
+          <div className="mt-4 not-md:pb-10">
             <TaskList />
           </div>
         </div>

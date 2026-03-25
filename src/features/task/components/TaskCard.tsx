@@ -116,7 +116,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
               {task.status !== "DONE" && task.status !== "TODO" && (
                 <button
                   onClick={() => handleStatusChange("DONE")}
-                  className="rounded-md border border-green-600 px-3 py-1 text-xs font-medium text-green-700 hover:bg-green-200"
+                  className="cursor-pointer rounded-md border border-green-600 px-3 py-1 text-xs font-medium text-green-700 hover:bg-green-200"
                 >
                   Complete
                 </button>
@@ -124,7 +124,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
               {task.status === "TODO" && (
                 <button
                   onClick={() => handleStatusChange("IN_PROGRESS")}
-                  className="rounded-md border border-blue-600 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200"
+                  className="cursor-pointer rounded-md border border-blue-600 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200"
                 >
                   Start
                 </button>
@@ -133,7 +133,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => setIsEditing(true)}
-                className="rounded-md bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-200 flex items-center gap-x-2"
+                className="cursor-pointer rounded-md bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-200 flex items-center gap-x-2"
               >
                 Edit
                 <LucidePen className="w-3.5 h-3.5" />
