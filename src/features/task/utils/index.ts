@@ -21,6 +21,14 @@ export const isDeadlineNear = (task: Task): boolean => {
   );
 };
 
+export const getDueInText = (taskDeadline?: string): string => {
+  if (!taskDeadline) return "";
+  const deadline = dayjs(taskDeadline);
+  const today = dayjs();
+  const daysUntil = deadline.diff(today, "hours");
+  return `⏰ Due in ${daysUntil} hours: `;
+};
+
 export const formatDate = (date?: string): string => {
   if (!date) return "";
   return dayjs(date).format("MMM DD, YYYY");

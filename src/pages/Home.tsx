@@ -7,15 +7,9 @@ import { Button } from "../components/ui/button";
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { TaskList } from "../features/task/components/TaskList";
-import useClickOutside from "../hooks/useClickOutside";
 
 export default function Home() {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const formContainer = useRef<HTMLDivElement>(null);
-
-  useClickOutside(formContainer, () => {
-    setIsFormOpen(false);
-  });
 
   return (
     <div className="min-h-screen bg-linear-to-b from-blue-50 to-white">
@@ -38,38 +32,42 @@ export default function Home() {
           <div className="task_statistics_block">
             <TaskStatistics />
           </div>
-          <div className="flex justify-between p-4 bg-white rounded-2xl mt-4">
-            <div className="task_search_filter_block flex gap-x-4 w-1/2">
-              <TaskSearchBar className="grow-0 focus-within:grow duration-500" />
-              <TaskFilterTabs />
+          <div>
+            <div className="flex justify-between p-4 bg-white rounded-2xl mt-4">
+              <div className="task_search_filter_block flex gap-x-4 w-1/2">
+                <TaskSearchBar className="grow-0 focus-within:grow duration-500" />
+                <TaskFilterTabs />
+              </div>
+              <div className="task_button_function relative">
+                <Button
+                  className="rounded-xl p-4 text-base bg-blue-600 text-white hover:bg-blue-700"
+                  size={"lg"}
+                  onClick={() => setIsFormOpen(!isFormOpen)}
+                >
+                  Add Task
+                </Button>
+              </div>
             </div>
-            <div className="task_button_function relative">
-              <Button
-                className="rounded-xl p-4 text-base bg-blue-600 text-white hover:bg-blue-700"
-                size={"lg"}
-                onClick={() => setIsFormOpen(!isFormOpen)}
-              >
-                Add Task
-              </Button>
-            </div>
+            <AnimatePresence>
+              {isFormOpen && (
+                <motion.div
+                  className="mt-2"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{
+                    ease: [0.7, 0, 0.3, 1],
+                    duration: 0.3,
+                  }}
+                >
+                  <TaskForm
+                    onSubmit={() => setIsFormOpen(false)}
+                    onCancel={() => setIsFormOpen(false)}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <AnimatePresence>
-            {isFormOpen && (
-              <motion.div
-                className="mt-2"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{
-                  ease: [0.7, 0, 0.3, 1],
-                  duration: 0.3,
-                }}
-                ref={formContainer}
-              >
-                <TaskForm onSubmit={() => setIsFormOpen(false)} />
-              </motion.div>
-            )}
-          </AnimatePresence>
           <div className="mt-4">
             <TaskList />
           </div>

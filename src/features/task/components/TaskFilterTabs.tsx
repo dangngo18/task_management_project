@@ -13,7 +13,7 @@ export const TaskFilterTabs: React.FC = () => {
   const { filter, handleSetFilter } = useTaskActions();
 
   return (
-    <div className="flex gap-2 overflow-x-auto">
+    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
       {FILTER_OPTIONS.map((option) => (
         <motion.button
           key={option.value}
