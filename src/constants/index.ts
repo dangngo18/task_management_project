@@ -15,4 +15,4 @@ export const STORAGE_KEYS = {
   USER_PREFERENCES: 'user_preferences',
 } as const;
 
-export const DEADLINE_WARNING_DAYS = 3;
+export const DEADLINE_WARNING_DAYS = 1;

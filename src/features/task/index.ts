@@ -1,10 +1,4 @@
 // Components
-export { TaskForm } from './components/TaskForm';
-export { TaskCard } from './components/TaskCard';
-export { TaskList } from './components/TaskList';
-export { TaskFilterTabs } from './components/TaskFilterTabs';
-export { TaskSearchBar } from './components/TaskSearchBar';
-export { TaskStatistics } from './components/TaskStatistics';
 
 // Hooks
 export { useTaskActions } from './hooks/useTaskActions';
@@ -23,10 +17,10 @@ export {
 
 // Types
 export type { Task, TaskStatus } from './types';
+export type { TaskFormData } from './types/form';
 
 // Schema
 export { taskFormSchema } from './schema';
-export type { TaskFormData } from './schema';
 
 // Utils
 export {

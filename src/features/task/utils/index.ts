@@ -1,5 +1,5 @@
 import { type Task } from "../";
-import { STATUS_COLORS } from "../../../constants";
+import { DEADLINE_WARNING_DAYS, STATUS_COLORS } from "../../../constants";
 import dayjs from "../../../lib/dayjs";
 
 export const isTaskOverdue = (task: Task): boolean => {
@@ -14,7 +14,11 @@ export const isDeadlineNear = (task: Task): boolean => {
   const deadline = dayjs(task.deadline);
   const today = dayjs();
   const daysUntil = deadline.diff(today, "day");
-  return daysUntil >= 0 && daysUntil <= 3 && task.status !== "DONE";
+  return (
+    daysUntil >= 0 &&
+    daysUntil <= DEADLINE_WARNING_DAYS &&
+    task.status !== "DONE"
+  );
 };
 
 export const formatDate = (date?: string): string => {
