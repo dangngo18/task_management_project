@@ -17,11 +17,19 @@ export const TaskProvider = ({ children }) => {
   const [sortBy, setSortBy] = useState('priority');
 
   const addTask = useCallback((task) => {
+    // Feature branch: Enhanced task creation with better defaults
     const newTask = {
       id: Math.max(...tasks.map(t => t.id), 0) + 1,
       ...task,
-      status: task.status || 'todo'
+      status: task.status || 'todo',
+      priority: task.priority || 'medium',
+      tags: task.tags || [],
+      comments: []
     };
+    // Validate before adding
+    if (!newTask.title) {
+      console.warn('Warning: Task created without title');
+    }
     setTasks(prev => [...prev, newTask]);
     return newTask;
   }, [tasks]);
