@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { TaskProvider } from "./context/TaskContext";
 import ViewSwitcher from "./components/ViewSwitcher";
 import KanbanBoard from "./components/KanbanBoard";
@@ -7,7 +7,7 @@ import { VIEW_MODES } from "./constants/taskConstants";
 import "./styles/App.css";
 
 function App() {
-  const [viewMode, setViewMode] = useState(VIEW_MODES.KANBAN);
+  const [viewMode, setViewMode] = useState(VIEW_MODES.KANBAN || 'kanban');
 
   return (
     <TaskProvider>
