@@ -6,11 +6,22 @@ export const TASK_STATUS = {
   DONE: 'done'
 };
 
-// Priority Levels
+// Priority Levels - Feature Branch Version
 export const PRIORITY_LEVELS = {
-  LOW: 'low',
+  CRITICAL: 'critical',
+  HIGH: 'high',
   MEDIUM: 'medium',
-  HIGH: 'high'
+  LOW: 'low',
+  TRIVIAL: 'trivial'
+};
+
+// Priority Colors
+export const PRIORITY_COLORS = {
+  critical: 'bg-red-200 text-red-900',
+  high: 'bg-orange-200 text-orange-900',
+  medium: 'bg-yellow-200 text-yellow-900',
+  low: 'bg-green-200 text-green-900',
+  trivial: 'bg-gray-200 text-gray-900'
 };
 
 // View Modes
